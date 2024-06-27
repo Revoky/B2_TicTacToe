@@ -48,16 +48,33 @@ class Morpion:
                 self.currentPlayer *= -1
                 self.label.config(text=f"Tour de {'X' if self.currentPlayer == 1 else 'O'}")
                 if self.currentPlayer == -1 :
-                    self.window.after(1000, self.aiTurn)
+                    self.window.after(500, self.aiTurn)
 
     def aiTurn(self) :
-        arr = []
+        for i in range(3):
+            for j in range(3):
+                if self.board[i, j] == 0:
+                    self.board[i, j] = -1
+                    if self.checkWinner():
+                        self.buttons[i][j].config(text='O', state='disabled')
+                        self.endGame("Le joueur O a gagné !")
+                        return
+                    self.board[i, j] = 1
+                    if self.checkWinner():
+                        self.board[i, j] = -1
+                        self.buttons[i][j].config(text='O', state='disabled')
+                        self.currentPlayer = 1
+                        self.label.config(text="Tour de X")
+                        return
+                    self.board[i, j] = 0
+
+        emptySpots = []
         for i in range(3) :
             for j in range(3) :
                 if self.board[i, j] == 0 :
-                    arr.append((i, j))
-        clic = np.random.choice(len(arr))
-        i, j = arr[clic]
+                    emptySpots.append((i, j))
+        clic = np.random.choice(len(emptySpots))
+        i, j = emptySpots[clic]
         self.click(i, j)
 
     def checkWinner(self):
