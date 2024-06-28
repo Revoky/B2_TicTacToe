@@ -147,24 +147,19 @@ class Morpion:
         closeButton = tk.Button(statsWindow, text="Fermer", command=statsWindow.destroy, bg='black', fg='#EC66E3', activebackground ='#9C2394', activeforeground ='#D4A5D1')
         closeButton.pack(pady=10)
 
-        winners = statsData[statsData.iloc[:, 0].str.contains('Winner')].iloc[:, 0].str.split().str[-1]
-
-        # Count the occurrences of each winner
-        winner_counts = winners.value_counts()
-        label = ["X (Humain)", "O (IA)", "Match Nul"]
-        # Create a round statistic graph
-        plt.figure(figsize=(8, 6))
-        plt.title('Statistique des victoires Morpion')
-        plt.pie(winner_counts, labels=label, autopct='%1.1f%%', startangle=140)
-        plt.show()
-
         statsWindow.mainloop()
 
     def VictoryDiagram(self):
-        data = np.array([15, 25])
-        label = ["X", "O"]
-
-        plt.pie(data, labels=label)
+        statsData = self.loadStats()
+        winners = statsData[statsData.iloc[:, 0].str.contains('Winner')].iloc[:, 0].str.split().str[-1]
+        possibleWinners = ["X", "O", "N"]
+        
+        winnerCounts = winners.value_counts().reindex(possibleWinners, fill_value=0)
+        label = ["X (Humain)", "O (IA)", "Match Nul"]
+        
+        plt.figure(figsize=(8, 6))
+        plt.title('Statistique des victoires Morpion')
+        plt.pie(winnerCounts, labels=label, autopct='%1.1f%%')
         plt.show()
 
     def resetBoard(self):
