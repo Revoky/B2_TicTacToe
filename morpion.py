@@ -37,11 +37,11 @@ class Morpion:
             if self.currentPlayer == 1:
                 self.buttons[i][j].config(text='X', state='disabled')
                 self.board[i, j] = 1
-                self.moves.append((i, j, 'X'))
+                self.moves.append(('X', i, j))
             else:
                 self.buttons[i][j].config(text='O', state='disabled')
                 self.board[i, j] = -1
-                self.moves.append((i, j, 'O'))
+                self.moves.append(('O', i, j))
             
             if self.checkWinner(self.currentPlayer):
                 winner = 'X' if self.currentPlayer == 1 else 'O'
@@ -61,7 +61,7 @@ class Morpion:
                     self.board[i, j] = -1
                     if self.checkWinner(-1):
                         self.buttons[i][j].config(text='O', state='disabled')
-                        self.moves.append((i, j, 'O'))
+                        self.moves.append(('O', i, j))
                         self.endGame("Le joueur O a gagné !", 'O')
                         return
                     self.board[i, j] = 0
@@ -73,7 +73,7 @@ class Morpion:
                     if self.checkWinner(1):
                         self.board[i, j] = -1
                         self.buttons[i][j].config(text='O', state='disabled')
-                        self.moves.append((i, j, 'O'))
+                        self.moves.append(('O', i, j))
                         self.currentPlayer = 1
                         self.label.config(text="Tour de X")
                         return
@@ -117,19 +117,22 @@ class Morpion:
             f.write(winner + '\n')
             f.write(separator + '\n')
 
-    def showStats(self):
+    def loadStats(self):
         try:
-            with open('morpion_moves.csv', 'r') as csvFile:
-                statsData = csvFile.read()
+            statsData = pd.read_csv('morpion_moves.csv')
         except FileNotFoundError:
-            statsData = "Aucune statistique trouvée"
+            statsData = "Aucun fichier de statistiques trouvé"
+        return statsData
+
+    def showStats(self):
+        statsData = self.loadStats()
         
         statsWindow = tk.Toplevel(self.window)
         statsWindow.title("Statistiques")
         statsWindow.configure(bg='black')
 
         statsText = tk.Text(statsWindow, font='normal 12', bg='black', fg='#EC66E3', wrap='word')
-        statsText.insert(tk.END, statsData)
+        statsText.insert(tk.END, statsData.to_string(index=False))
         statsText.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         scrollbar = tk.Scrollbar(statsWindow, command=statsText.yview)
