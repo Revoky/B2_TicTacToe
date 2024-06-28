@@ -4,8 +4,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
-
 class Morpion:
     def __init__(self, window):
         self.window = window
@@ -143,8 +141,11 @@ class Morpion:
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         statsText.config(yscrollcommand=scrollbar.set)
 
-        close = tk.Button(statsWindow, text="Fermer", command=statsWindow.destroy, bg='black', fg='#EC66E3', activebackground ='#9C2394', activeforeground ='#D4A5D1')
-        close.pack(pady=10)
+        DiagramButton = tk.Button(statsWindow, text="Diagramme des victoires", command=self.VictoryDiagram, bg='black', fg='#EC66E3', activebackground ='#9C2394', activeforeground ='#D4A5D1')
+        DiagramButton.pack()
+
+        closeButton = tk.Button(statsWindow, text="Fermer", command=statsWindow.destroy, bg='black', fg='#EC66E3', activebackground ='#9C2394', activeforeground ='#D4A5D1')
+        closeButton.pack(pady=10)
 
         winners = statsData[statsData.iloc[:, 0].str.contains('Winner')].iloc[:, 0].str.split().str[-1]
 
@@ -158,6 +159,13 @@ class Morpion:
         plt.show()
 
         statsWindow.mainloop()
+
+    def VictoryDiagram(self):
+        data = np.array([15, 25])
+        label = ["X", "O"]
+
+        plt.pie(data, labels=label)
+        plt.show()
 
     def resetBoard(self):
         self.board = np.zeros((3, 3), dtype=int)
